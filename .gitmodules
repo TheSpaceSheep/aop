@@ -1,0 +1,3 @@
+[submodule "envs/microgrids_rl_new"]
+	path = envs/microgrids_rl_new
+	url = git@gitlab.uliege.be:Ioannis.Boukas/microgrids_rl_new.git

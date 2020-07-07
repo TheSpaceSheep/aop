@@ -156,7 +156,7 @@ class MPCAgent(Agent):
 				break
 
 			num_rollouts = self.params['mpc']['num_rollouts']
-			
+
 			self.planned_actions = copy.deepcopy(best_plan)
 			self.extend_plan(H)
 

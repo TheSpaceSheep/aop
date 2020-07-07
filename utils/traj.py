@@ -4,7 +4,7 @@ import copy
 import multiprocessing as mp
 
 def eval_traj(
-    start_env, start_state, prev_obs, 
+    start_env, start_state, prev_obs,
     mujoco=True, perturb=None,
     H=64, gamma=.99,
     act_mode='fixed', pt=(),
@@ -106,7 +106,7 @@ def generate_trajectories(
     ]
 
     results = _try_multiprocess(
-        args_list, num_cpu, 
+        args_list, num_cpu,
         generate_paths_acts_star
     )
 
@@ -191,7 +191,7 @@ def _try_multiprocess(args_list, num_cpu, f, max_timeouts=1):
         except Exception as e:
             print(str(e))
             print('WARNING: error raised in multiprocess, trying again')
-            
+
             pool.close()
             pool.terminate()
             pool.join()

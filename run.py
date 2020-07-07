@@ -10,7 +10,7 @@ def main():
         choices=['aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3'],
         help='Choice of algorithm to use for training')
     parser.add_argument('--env', '-e', type=str, default='hopper',
-        choices=['hopper', 'ant', 'maze-d', 'maze-s'],
+        choices=['hopper', 'ant', 'maze-d', 'maze-s', 'microgrid'],
         help='Base environment for agent')
     parser.add_argument('--setting', '-s', type=str, default='changing',
         choices=['changing', 'novel', 'standard'],
@@ -86,6 +86,8 @@ def is_valid_env(env_name, setting):
     elif env_name == 'ant' and setting in ['changing', 'standard']:
         return True
     elif 'maze' in env_name and setting in ['changing', 'novel']:
+        return True
+    elif env_name == 'microgrid':
         return True
     else:
         return False

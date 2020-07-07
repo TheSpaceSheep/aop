@@ -87,11 +87,12 @@ env_params = {
     'maze-d': {
         'changing': {
             'problem': {
-                'T': 25000, 'gamma': .99, 'act_noise': 0,
+                #TMPCH
+                'T': 30, 'gamma': .99, 'act_noise': 0,
                 'ep_len': None, 'do_resets': False,
-                'print_freq': 10, 'save_freq': 5000,
+                'print_freq': 10, 'save_freq': 5,
                 'render_env': False, 'freeze': False,
-                'dir_name': None
+                'dir_name': '~/Documents/Programmation/aop/maze_test/'
             },
             'env': {
                 'env': 'Particle', 'is_mujoco': False,
@@ -159,6 +160,28 @@ env_params = {
 
                 'vel_schedule': [], 'vel_every': 100000,
                 'tvel': False, 'vel_in_obs': False
+            }
+        }
+    },
+    'microgrid': {
+        'standard': {
+            'problem': {
+                'T': 20, 'gamma': .99, 'act_noise': 0,
+                'ep_len': None, 'do_resets': False,
+                'print_freq': 10, 'save_freq': 4000,
+                'render_env': False, 'freeze': False,
+                'dir_name': None
+            },
+            'env': {
+                'env': 'microgrid',
+                'is_mujoco': False,
+                'tvel': False,
+                'params': {
+                    'id': 'microgridRLsimulator-v0',
+                    'start_date': '2016-01-01',
+                    'end_date': '2017-01-01',
+                    'case': 'elespino_continuous'
+                }
             }
         }
     }

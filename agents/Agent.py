@@ -31,10 +31,15 @@ class Agent():
                 target_vel=0 if self.params['env']['tvel'] else None,
                 target_vel_in_obs=self.params['env']['vel_in_obs']
             )
-            
+
         elif self.params['env']['env'] == 'Ant':
             from envs.ContinualAntEnv import ContinualAntEnv
             self.env = ContinualAntEnv()
+
+        elif self.params['env']['env'] == 'microgrid':
+            import gym
+            import microgridRLsimulator
+            self.env = gym.make(**self.params['env']['params'])
 
         else:
             import gym
@@ -104,7 +109,7 @@ class Agent():
         # Misc variables
         self.cache = ()
         self.dtype = torch.float32
-        
+
         USE_GPU = self.params['problem']['use_gpu']
         self.device = torch.device('cuda' if USE_GPU and \
                                    torch.cuda.is_available() else 'cpu')
@@ -126,7 +131,7 @@ class Agent():
         except KeyboardInterrupt:
             print('Terminating agent')
             self.env.close()
-            
+
         self.shutdown()
 
         return fin_lifetime
