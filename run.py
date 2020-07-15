@@ -4,6 +4,10 @@ import copy
 import params.default_params as default_params
 import params.env_params as env_params
 
+
+def do_experiments():
+    pass
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--algo', '-a', type=str, default='aop',

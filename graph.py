@@ -37,9 +37,10 @@ def main():
             agent = pickle.load(f)
             f.close()
         except Exception as e:
+            print("couldn't open model")
             continue
 
-        algo = agents.algo
+        algo = agent.params['problem']['algo']
         if algo in agents:
             agents[algo].append(agent)
         else:
@@ -56,7 +57,7 @@ def main():
 
     rew_mean = {algo: np.zeros(T) for algo in agents}
     rew_std = {algo: np.zeros(T) for algo in agents}
-    smoothing = 250 # set to 0 to remove smoothing
+    smoothing = 0 # set to 0 to remove smoothing
 
     for algo in agents:
         for t in range(T):

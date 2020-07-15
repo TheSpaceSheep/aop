@@ -4,6 +4,7 @@ import copy
 import os
 import pickle
 import time
+import pprint
 
 from utils.perturbations import Perturber
 
@@ -132,6 +133,18 @@ class Agent():
             print('Terminating agent')
             self.env.close()
 
+        if self.params['env']['env'] == 'microgrid':
+            from datetime import datetime
+            now = datetime.now()
+            dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+            path = f"results/{dt_string}/"
+
+            self.env.render(path, id=self.params['problem']['algo'])
+            print(f'results plotted at {path}')
+
+            with open(path+"params.txt", 'w') as param_file:
+                pprint.pprint(self.params, param_file)
+
         self.shutdown()
 
         return fin_lifetime
@@ -179,7 +192,7 @@ class Agent():
             self.env.sim.set_state(env_state)
 
         action += np.random.normal(
-            0, self.params['problem']['act_noise'], 
+            0, self.params['problem']['act_noise'],
             size=action.shape
         )
         self.step(action)
@@ -215,7 +228,7 @@ class Agent():
             'rew': rew, 'done': done
         })
         self.action_taken(self.prev_obs, obs, rew, done, ifo)
-        
+
         # Reset if desired
         if done and self.params['problem']['do_resets']:
             self.prev_obs = self.env.reset()

@@ -87,12 +87,13 @@ env_params = {
     'maze-d': {
         'changing': {
             'problem': {
-                #TMPCH
-                'T': 30, 'gamma': .99, 'act_noise': 0,
+                # simple settings for testing
+                'T': 100, 'gamma': .99, 'act_noise': 0,
                 'ep_len': None, 'do_resets': False,
-                'print_freq': 10, 'save_freq': 5,
+                'print_freq': 10, 'save_freq': 10,
                 'render_env': False, 'freeze': False,
-                'dir_name': '~/Documents/Programmation/aop/maze_test/'
+                'dir_name': 'maze_test/',
+                'algo': 'aop'
             },
             'env': {
                 'env': 'Particle', 'is_mujoco': False,
@@ -168,7 +169,7 @@ env_params = {
             'problem': {
                 'T': 20, 'gamma': .99, 'act_noise': 0,
                 'ep_len': None, 'do_resets': False,
-                'print_freq': 10, 'save_freq': 4000,
+                'print_freq': 10, 'save_freq': 4,
                 'render_env': False, 'freeze': False,
                 'dir_name': None
             },
