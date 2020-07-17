@@ -27,26 +27,29 @@ def main():
 
     # Gather agents
 
-    agents, agent_files = {}, next(os.walk(directory))[1]
+    agents, agent_dirs = {}, next(os.walk(directory))[1]
     agents_found = 0
-    for file_name in agent_files:
-        info = (directory, file_name, T)
+    # import ipdb; ipdb.set_trace()
+    for d in agent_dirs:
+        agent_files = next(os.walk(directory+d))[1]
+        for file_name in agent_files:
+            info = (directory+d, file_name, T)
 
-        try:
-            f = open('%s/%s/checkpoints/model_%d.pkl' % info, 'rb')
-            agent = pickle.load(f)
-            f.close()
-        except Exception as e:
-            print("couldn't open model")
-            continue
+            try:
+                f = open('%s/%s/checkpoints/model_%d.pkl' % info, 'rb')
+                agent = pickle.load(f)
+                f.close()
+            except Exception as e:
+                print("couldn't open model")
+                continue
 
-        algo = agent.params['problem']['algo']
-        if algo in agents:
-            agents[algo].append(agent)
-        else:
-            agents[algo] = [agent]
+            algo = agent.algo
+            if algo in agents:
+                agents[algo].append(agent)
+            else:
+                agents[algo] = [agent]
 
-        agents_found += 1
+            agents_found += 1
 
     if agents_found == 0:
         info = (directory, T)

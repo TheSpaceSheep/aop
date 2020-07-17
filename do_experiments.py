@@ -4,23 +4,21 @@ import copy
 import params.default_params as default_params
 import params.env_params as env_params
 
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--algo', '-a', type=str, default='aop',
-        choices=['aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3'],
-        help='Choice of algorithm to use for training')
-    parser.add_argument('--env', '-e', type=str, default='hopper',
+    parser.add_argument('--algos', '-a', nargs='+', type=str, default='all',
+        choices=['all', 'aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3'])
+    parser.add_argument('--env', '-e', type=str, default='microgrid',
         choices=['hopper', 'ant', 'maze-d', 'maze-s', 'microgrid'],
-        help='Base environment for agent')
-    parser.add_argument('--setting', '-s', type=str, default='changing',
+        help='Base environment for agents')
+    parser.add_argument('--setting', '-s', type=str, default='standard',
         choices=['changing', 'novel', 'standard'],
         help='Specify which setting to test in')
     parser.add_argument('--output_dir', '-d', type=str,
-        help='Directory in ex/ to output models to (for example, ex/my_exp_1)')
+        help='Directory to store outputs')
     parser.add_argument('--num_trials', '-n', type=int, default=1,
         help='Number of trials (seeds) to run for')
-    parser.add_argument('--num_cpus', '-c', type=int, default=4,
+    parser.add_argument('--num_cpus', '-c', type=int, default=1,
         help='Number of CPUs to use for trajectory generation')
     parser.add_argument('--use_gpu', '-g', default=True,
         help='Whether or not to use GPU (currently only TD3 supports this)')
@@ -35,8 +33,11 @@ def main():
         return
 
     # Basic information for experiments
-
-    agent_class = get_agent_class(args.algo)
+    if 'all' in args.algos:
+        args.algos = ['aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3']
+    agent_classes = []
+    for algo in args.algos:
+        agent_classes.append(get_agent_class(algo))
 
     output_dir = args.output_dir if args.output_dir else default_output_dir()
 
@@ -45,7 +46,6 @@ def main():
     params = copy.deepcopy(default_params.base_params)
     params.update(env_params.env_params[args.env][args.setting])
 
-    params['problem']['algo'] = args.algo
     params['problem']['output_dir'] = output_dir
 
     params['mpc']['num_cpu'] = args.num_cpus
@@ -55,8 +55,8 @@ def main():
     params['problem']['eval_len'] = 1000
     params['problem']['use_gpu'] = args.use_gpu
 
-    # Setting environment-specific hyperparameter settings
 
+    # Setting environment-specific hyperparameter settings
     if args.env == 'maze-s':
         params['aop']['std_thres'] = 0
         params['aop']['bellman_thres'] = 0
@@ -69,18 +69,19 @@ def main():
         params['p-bc']['hs'] = [64,64]
         params['td3']['hs'] = [64,64]
 
-    # Setting algorithm-specific hyperparameter settings
 
-    if args.algo == 'polo' or args.algo == 'mpc-3':
-        params['mpc']['num_iter'] = 3
+    # Run experiments with different agents
+    for ag, algo in zip(agent_classes, args.algos):
+        params['problem']['algo'] = algo
+        # Setting algorithm-specific hyperparameter settings
+        if algo == 'polo' or algo == 'mpc-3':
+            params['mpc']['num_iter'] = 3
 
-    # Run experiments
+        for i in range(args.num_trials):
+            params['problem']['dir_name'] = f'{output_dir}/{algo}_trial_{i}/'
+            agent = ag(params)
+            agent.run_lifetime()
 
-    for i in range(args.num_trials):
-        params['problem']['dir_name'] = '%s/trial_%d' % (output_dir, i)
-        agent = agent_class(params)
-        #import ipdb; ipdb.set_trace()
-        agent.run_lifetime()
 
 def is_valid_env(env_name, setting):
     if env_name == 'hopper':
@@ -121,5 +122,7 @@ def get_agent_class(algo):
         agent_class = MPCAgent
     return agent_class
 
-if __name__ == '__main__':
+
+
+if __name__=='__main__':
     main()

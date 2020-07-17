@@ -17,6 +17,7 @@ class Agent():
     def __init__(self, params):
         # Store parameters for easy access
         self.params = params
+        self.algo = params['problem']['algo']
 
         # Environment-specific handling
         if self.params['env']['env'] == 'Particle':

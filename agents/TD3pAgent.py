@@ -18,7 +18,7 @@ class TD3pAgent(POLOAgent):
 
         # TD3 module contains actor and critic
         self.TD3 = TD3.TD3(
-            self.N, self.M, 1, 
+            self.N, self.M, 1,
             self.params['p-td3']['hidden_sizes'],
             device=self.device
         )
@@ -57,9 +57,9 @@ class TD3pAgent(POLOAgent):
 
         self.print('TD3 metrics', mode='head')
 
-        self.print('policy traj rew', 
+        self.print('policy traj rew',
             self.hist['pols'][self.time-1][0])
-        self.print('policy traj emp rew', 
+        self.print('policy traj emp rew',
             self.hist['pols'][self.time-1][1])
 
         return bi, ei

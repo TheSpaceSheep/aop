@@ -56,5 +56,6 @@ class MLP(nn.Module):
 
     def select_action(self, x):
         x = torch.tensor(x, dtype=self.dtype)
-        y = torch.squeeze(self.forward(x), dim=-1)
+        # y = torch.squeeze(self.forward(x), dim=-1)
+        y = self.forward(x)
         return y.detach().cpu().numpy()
