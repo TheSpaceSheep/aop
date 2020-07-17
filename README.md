@@ -29,3 +29,4 @@ python graph.py ex/ 4
 ```
 Replace 4 with the number of steps you ran the experiments for (can be changed in params/env_params.py)
 
+!several agents for 4 timesteps(https://github.com/TheSpaceSheep/aop/blob/master/rewards.png?raw=true)
