@@ -25,7 +25,7 @@ python do_experiments.py --algos aop ppo td3
 
 Then plot it 
 ```
-python graph.py ex/ [T]
+python graph.py ex/ 4
 ```
-Replace T with the number of steps you run the experiments for (can be changed in params/env_params.py)
+Replace 4 with the number of steps you ran the experiments for (can be changed in params/env_params.py)
 
