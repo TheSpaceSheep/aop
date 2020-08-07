@@ -8,13 +8,13 @@ import params.env_params as env_params
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--algo', '-a', type=str, default='aop',
-        choices=['aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3'],
+        choices=['aop', 'aop-bc', 'polo', 'td3', 'ppo', 'mpc-8', 'mpc-3', 'rnd'],
         help='Choice of algorithm to use for training')
     parser.add_argument('--env', '-e', type=str, default='hopper',
         choices=['hopper', 'ant', 'maze-d', 'maze-s', 'microgrid'],
         help='Base environment for agent')
     parser.add_argument('--setting', '-s', type=str, default='changing',
-        choices=['changing', 'novel', 'standard'],
+        choices=['changing', 'novel', 'standard', 'continuous', 'discrete'],
         help='Specify which setting to test in')
     parser.add_argument('--output_dir', '-d', type=str,
         help='Directory in ex/ to output models to (for example, ex/my_exp_1)')
@@ -47,6 +47,7 @@ def main():
 
     params['problem']['algo'] = args.algo
     params['problem']['output_dir'] = output_dir
+    params['env']['setting'] = args.setting
 
     params['mpc']['num_cpu'] = args.num_cpus
     params['pg']['num_cpu'] = args.num_cpus
@@ -119,6 +120,9 @@ def get_agent_class(algo):
     elif algo == 'mpc-8' or algo == 'mpc-3':
         from agents.MPCAgent import MPCAgent
         agent_class = MPCAgent
+    elif algo == 'rnd':
+        from agents.RandomDiscrete import RandomDiscrete
+        agent_class = RandomDiscrete
     return agent_class
 
 if __name__ == '__main__':

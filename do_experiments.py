@@ -11,8 +11,8 @@ def main():
     parser.add_argument('--env', '-e', type=str, default='microgrid',
         choices=['hopper', 'ant', 'maze-d', 'maze-s', 'microgrid'],
         help='Base environment for agents')
-    parser.add_argument('--setting', '-s', type=str, default='standard',
-        choices=['changing', 'novel', 'standard'],
+    parser.add_argument('--setting', '-s', type=str, default='continuous',
+        choices=['changing', 'novel', 'standard', 'discrete', 'continuous'],
         help='Specify which setting to test in')
     parser.add_argument('--output_dir', '-d', type=str,
         help='Directory to store outputs')
@@ -46,6 +46,7 @@ def main():
     params = copy.deepcopy(default_params.base_params)
     params.update(env_params.env_params[args.env][args.setting])
 
+    params['env']['setting'] = args.setting
     params['problem']['output_dir'] = output_dir
 
     params['mpc']['num_cpu'] = args.num_cpus
@@ -81,6 +82,8 @@ def main():
             params['problem']['dir_name'] = f'{output_dir}/{algo}_trial_{i}/'
             agent = ag(params)
             agent.run_lifetime()
+
+    print('end of experiments')
 
 
 def is_valid_env(env_name, setting):

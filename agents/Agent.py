@@ -70,9 +70,15 @@ class Agent():
         self.has_tvel = self.params['env']['tvel']
         self.tvel = self.env.get_target_vel() if self.has_tvel else None
         self.params['env']['N'] = self.env.observation_space.shape[0]
-        self.params['env']['M'] = self.env.action_space.shape[0]
-        self.params['env']['min_act'] = self.env.action_space.low[0]
-        self.params['env']['max_act'] = self.env.action_space.high[0]
+        if self.params['env']['setting'] == 'continuous':
+            self.params['env']['M'] = self.env.action_space.shape[0]
+            self.params['env']['min_act'] = self.env.action_space.low[0]
+            self.params['env']['max_act'] = self.env.action_space.high[0]
+        elif self.params['env']['setting'] == 'discrete':
+            self.params['env']['M'] = self.env.action_space.n
+            self.params['env']['min_act'] = 0
+            self.params['env']['max_act'] = self.params['env']['M']
+
 
         # Store important parameters for fast access
         self.T = self.params['problem']['T']
@@ -192,10 +198,13 @@ class Agent():
         if self.mujoco:
             self.env.sim.set_state(env_state)
 
-        action += np.random.normal(
-            0, self.params['problem']['act_noise'],
-            size=action.shape
-        )
+        if self.params['env']['setting'] == 'continuous':
+            action += np.random.normal(
+                0, self.params['problem']['act_noise'],
+                size=action.shape
+            )
+        elif self.params['env']['setting'] == 'discrete':
+            pass
         self.step(action)
 
         # Everything below self.step must refer to self.time-1 when indexing
@@ -337,14 +346,14 @@ class Agent():
                     x = self.hist['env'][self.time][0][0]
                     vel = (x - prev_x) / (pf * self.env.dt)
                     z = self.hist['env'][self.time][0][2]
-                    
+
                 self.print('x', x)
                 self.print('z', z)
                 self.print('x velocity avg', vel)
 
                 if self.has_tvel and \
                     self.env.get_target_vel() is not None:
-                    self.print('target velocity', 
+                    self.print('target velocity',
                         self.env.get_target_vel())
 
             # Update target velocity
@@ -408,7 +417,7 @@ class Agent():
         # General agent performance metrics
         self.print('reward metrics', mode='head')
 
-        self.print('real reward avg', 
+        self.print('real reward avg',
             np.mean(self.hist['rew'][bi:ei]))
         self.print('real reward max',
             np.max(self.hist['rew'][bi:ei]))
